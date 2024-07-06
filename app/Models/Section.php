@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Subject extends Model
+class Section extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'title',
-        'subject_code',
+        'year_level',
+        'name',
         'course_id'
     ];
     public function course()

@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CourseController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\SectionController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -17,5 +19,13 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-Route::resource('subjects', SubjectController::class);
+
+
+Route::resources([
+    'courses' => CourseController::class,
+]);
+Route::post('courses/{course}/addSubject', [SubjectController::class, 'addSubject'])->name('addSubject');
+Route::post('courses/{course}/addSection', [SectionController::class, 'addSection'])->name('addSection');
+
+
 require __DIR__.'/auth.php';
