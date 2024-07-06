@@ -22,7 +22,7 @@ class CourseStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:255'],
+            'course_title' => ['required', 'string', 'max:255'],
             'abbrev' => ['required', 'string', 'max:20'],
         ];
     }

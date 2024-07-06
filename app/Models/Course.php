@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Course extends Model
 {
     use HasFactory;
-    protected $fillable = ['title', 'abbrev'];
+    protected $fillable = ['course_title', 'abbrev'];
 
     public function subjects()
     {

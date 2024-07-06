@@ -6,12 +6,12 @@
         <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
             <form method="POST" action="{{ route('courses.store') }}">
                 @csrf
-                <!-- Title -->
+                <!-- Course Title -->
                 <div>
-                    <x-input-label for="title" :value="__('Title')" />
-                    <x-text-input id="title" type="text" name="title" :value="old('title')" autofocus
-                        autocomplete="title" />
-                    <x-input-error :messages="$errors->get('title')" />
+                    <x-input-label for="course_title" :value="__('Course Title')" />
+                    <x-text-input id="course_title" type="text" name="course_title" :value="old('course_title')" autofocus
+                        autocomplete="course_title" />
+                    <x-input-error :messages="$errors->get('course_title')" />
                 </div>
                 <!-- Abbrev -->
                 <div>
@@ -20,12 +20,12 @@
                         autocomplete="abbrev" />
                     <x-input-error :messages="$errors->get('abbrev')" />
                 </div>
-                <div class="flex items-center gap-4">
-                    <x-primary-button>{{ __('Save') }}</x-primary-button>
+                <div class="flex justify-end mt-2 items-center gap-4">
                     @if (session('status') === 'course-stored')
                         <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)"
                             class="text-sm text-gray-600">{{ __('Saved.') }}</p>
                     @endif
+                    <x-primary-button>{{ __('Save') }}</x-primary-button>
                 </div>
             </form>
         </div>
