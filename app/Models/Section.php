@@ -9,8 +9,8 @@ class Section extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'section_name',
         'year_level',
-        'name',
         'course_id'
     ];
     public function course()

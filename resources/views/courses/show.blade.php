@@ -40,16 +40,16 @@
                     <h1>Add Subject</h1>
                     <form method="POST" action="{{ route('addSubject', $course) }}">
                         @csrf
-                        <!-- Title -->
+                        <!-- Subject Name -->
                         <div>
-                            <x-input-label for="title" :value="__('Title')" />
-                            <x-text-input id="title" type="text" name="title" :value="old('title')" autofocus
-                                autocomplete="title" />
-                            <x-input-error :messages="$errors->get('title')" />
+                            <x-input-label for="subject_name" :value="__('Subject Name')" />
+                            <x-text-input id="subject_name" type="text" name="subject_name" :value="old('subject_name')"
+                                autofocus autocomplete="subject_name" />
+                            <x-input-error :messages="$errors->get('subject_name')" />
                         </div>
                         <!-- Subject Code -->
                         <div>
-                            <x-input-label for="subject_code" :value="__('Abbreviation')" />
+                            <x-input-label for="subject_code" :value="__('Subject Code')" />
                             <x-text-input id="subject_code" type="text" name="subject_code" :value="old('subject_code')"
                                 autofocus autocomplete="subject_code" />
                             <x-input-error :messages="$errors->get('subject_code')" />
@@ -108,19 +108,19 @@
                     <h1>Add Section</h1>
                     <form method="POST" action="{{ route('addSection', $course) }}">
                         @csrf
+                        <!-- Section Name -->
+                        <div>
+                            <x-input-label for="section_name" :value="__('Section Name')" />
+                            <x-text-input id="section_name" type="text" name="section_name" :value="old('section_name')"
+                                autofocus autocomplete="section_name" />
+                            <x-input-error :messages="$errors->get('section_name')" />
+                        </div>
                         <!-- Year Level -->
                         <div>
                             <x-input-label for="year_level" :value="__('Year Level')" />
                             <x-text-input id="year_level" type="text" name="year_level" :value="old('year_level')" autofocus
                                 autocomplete="year_level" />
                             <x-input-error :messages="$errors->get('year_level')" />
-                        </div>
-                        <!-- Name -->
-                        <div>
-                            <x-input-label for="name" :value="__('Name')" />
-                            <x-text-input id="name" type="text" name="name" :value="old('name')" autofocus
-                                autocomplete="name" />
-                            <x-input-error :messages="$errors->get('name')" />
                         </div>
                         <div class="flex items-center justify-end mt-2 gap-2">
                             @if (session('status') === 'section-stored')

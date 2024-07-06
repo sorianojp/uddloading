@@ -22,8 +22,8 @@ class SectionUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'section_name' => ['required', 'string', 'max:20'],
             'year_level' => ['required', 'string', 'max:1'],
-            'name' => ['required', 'string', 'max:20'],
         ];
     }
 }

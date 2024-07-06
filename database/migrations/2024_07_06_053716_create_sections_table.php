@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('sections', function (Blueprint $table) {
             $table->id();
+            $table->string('section_name');
             $table->string('year_level');
-            $table->string('name');
             $table->foreignId('course_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

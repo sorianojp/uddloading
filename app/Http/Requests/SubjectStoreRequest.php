@@ -22,7 +22,7 @@ class SubjectStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:255'],
+            'subject_name' => ['required', 'string', 'max:255'],
             'subject_code' => ['required', 'string', 'max:20'],
         ];
     }
