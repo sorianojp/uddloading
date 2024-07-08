@@ -19,4 +19,8 @@ class Subject extends Model
     {
         return $this->belongsTo(Course::class);
     }
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class);
+    }
 }

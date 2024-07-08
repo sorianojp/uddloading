@@ -11,4 +11,8 @@ class Room extends Model
     protected $fillable = [
         'room_name'
     ];
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class);
+    }
 }
