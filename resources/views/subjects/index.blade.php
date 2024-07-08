@@ -22,6 +22,20 @@
                             autocomplete="subject_code" />
                         <x-input-error :messages="$errors->get('subject_code')" />
                     </div>
+                    <!-- Lecture -->
+                    <div>
+                        <x-input-label for="lec" :value="__('Lecture')" />
+                        <x-text-input id="lec" type="number" name="lec" :value="old('lec')" step="0.0"
+                            autofocus autocomplete="lec" />
+                        <x-input-error :messages="$errors->get('lec')" />
+                    </div>
+                    <!-- Laboratory -->
+                    <div>
+                        <x-input-label for="lab" :value="__('Laboratory')" />
+                        <x-text-input id="lab" type="number" name="lab" :value="old('lab')" autofocus
+                            autocomplete="lab" />
+                        <x-input-error :messages="$errors->get('lab')" />
+                    </div>
                     <div class="flex items-center justify-end mt-2 gap-2">
                         @if (session('status') === 'subject-stored')
                             <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)">
@@ -44,6 +58,9 @@
                                 <th scope="col" class="px-6 py-3">
                                     Subject Code
                                 </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Lec/Lab
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -55,6 +72,9 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         {{ $subject->subject_code }}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        {{ $subject->lec }}/ {{ $subject->lab }}
                                     </td>
                                 </tr>
                             @empty

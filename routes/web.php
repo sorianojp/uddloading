@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\SectionController;
+use App\Http\Controllers\RoomController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -23,6 +24,7 @@ Route::middleware('auth')->group(function () {
 
 Route::resources([
     'courses' => CourseController::class,
+    'rooms' => RoomController::class,
 ]);
 Route::get('courses/{course}/subjects', [SubjectController::class, 'subjects'])->name('subjects');
 Route::post('courses/{course}/addSubject', [SubjectController::class, 'addSubject'])->name('addSubject');
