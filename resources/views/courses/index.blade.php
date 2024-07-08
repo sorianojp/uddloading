@@ -43,6 +43,8 @@
                             </td>
                             <td class="px-6 py-4">
                                 <a href="{{ route('courses.show', $course) }}">View</a>
+                                <a href="{{ route('subjects', $course) }}">Subjects</a>
+                                <a href="{{ route('sections', $course) }}">Sections</a>
                             </td>
                         </tr>
                     @empty

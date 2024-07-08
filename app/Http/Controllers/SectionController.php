@@ -12,11 +12,15 @@ use App\Http\Requests\SectionUpdateRequest;
 
 class SectionController extends Controller
 {
+    public function sections(Course $course): View
+    {
+        return view('sections.index',compact('course'));
+    }
     public function addSection(SectionStoreRequest $request, Course $course): RedirectResponse
     {
         $section = new Section($request->validated());
-        $course->subjects()->save($section);
-        return redirect()->route('courses.show', $course)
+        $course->sections()->save($section);
+        return redirect()->route('sections', $course)
                          ->with('status', 'section-stored');
     }
 }

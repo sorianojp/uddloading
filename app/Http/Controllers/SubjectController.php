@@ -12,12 +12,15 @@ use App\Http\Requests\SubjectUpdateRequest;
 
 class SubjectController extends Controller
 {
-
+    public function subjects(Course $course): View
+    {
+        return view('subjects.index',compact('course'));
+    }
     public function addSubject(SubjectStoreRequest $request, Course $course): RedirectResponse
     {
         $subject = new Subject($request->validated());
         $course->subjects()->save($subject);
-        return redirect()->route('courses.show', $course)
+        return redirect()->route('subjects', $course)
                          ->with('status', 'subject-stored');
     }
 }

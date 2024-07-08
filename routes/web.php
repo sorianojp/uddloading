@@ -24,7 +24,9 @@ Route::middleware('auth')->group(function () {
 Route::resources([
     'courses' => CourseController::class,
 ]);
+Route::get('courses/{course}/subjects', [SubjectController::class, 'subjects'])->name('subjects');
 Route::post('courses/{course}/addSubject', [SubjectController::class, 'addSubject'])->name('addSubject');
+Route::get('courses/{course}/sections', [SectionController::class, 'sections'])->name('sections');
 Route::post('courses/{course}/addSection', [SectionController::class, 'addSection'])->name('addSection');
 
 
