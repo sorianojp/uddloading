@@ -11,25 +11,25 @@
                     <!-- Subject -->
                     <div>
                         <x-input-label for="subject_id" :value="__('Subject')" />
-                        <select name="subject_id" id="subject_id">
+                        <x-select-input name="subject_id" id="subject_id">
                             @foreach ($section->course->subjects as $subject)
                                 <option value="{{ $subject->id }}">{{ $subject->subject_name }}</option>
                             @endforeach
-                        </select>
+                        </x-select-input>
                         <x-input-error :messages="$errors->get('subject_id')" />
                     </div>
                     <div>
                         <x-input-label for="room_id" :value="__('Room')" />
-                        <select name="room_id" id="room_id">
+                        <x-select-input name="room_id" id="room_id">
                             @foreach ($rooms as $room)
                                 <option value="{{ $room->id }}">{{ $room->room_name }}</option>
                             @endforeach
-                        </select>
+                        </x-select-input>
                         <x-input-error :messages="$errors->get('room_id')" />
                     </div>
                     <div>
                         <x-input-label for="days" :value="__('Days')" />
-                        <select name="days[]" id="days" multiple>
+                        <x-select-input name="days[]" id="days" multiple>
                             <option value="Monday">Monday</option>
                             <option value="Tuesday">Tuesday</option>
                             <option value="Wednesday">Wednesday</option>
@@ -37,21 +37,22 @@
                             <option value="Friday">Friday</option>
                             <option value="Saturday">Saturday</option>
                             <option value="Sunday">Sunday</option>
-                        </select>
+                        </x-select-input>
                         <x-input-error :messages="$errors->get('days')" />
                     </div>
-                    <div>
-                        <x-input-label for="time_start" :value="__('Start Time')" />
-                        <x-text-input id="time_start" type="time" name="time_start" :value="old('time_start')" autofocus
-                            autocomplete="time_start" />
-                        <x-input-error :messages="$errors->get('time_start')" />
-                    </div>
-
-                    <div>
-                        <x-input-label for="time_end" :value="__('End Time')" />
-                        <x-text-input id="time_end" type="time" name="time_end" :value="old('time_end')" autofocus
-                            autocomplete="time_end" />
-                        <x-input-error :messages="$errors->get('time_end')" />
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <x-input-label for="time_start" :value="__('Start Time')" />
+                            <x-text-input id="time_start" type="time" name="time_start" :value="old('time_start')" autofocus
+                                autocomplete="time_start" />
+                            <x-input-error :messages="$errors->get('time_start')" />
+                        </div>
+                        <div>
+                            <x-input-label for="time_end" :value="__('End Time')" />
+                            <x-text-input id="time_end" type="time" name="time_end" :value="old('time_end')" autofocus
+                                autocomplete="time_end" />
+                            <x-input-error :messages="$errors->get('time_end')" />
+                        </div>
                     </div>
                     <div class="flex items-center justify-end mt-2 gap-2">
                         @if (session('status') === 'schedule-stored')
@@ -66,7 +67,7 @@
             <x-card class="col-span-2">
                 <h1>Schedules</h1>
                 <div class="relative overflow-x-auto sm:rounded-lg">
-                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <table class="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
                                 <th scope="col" class="px-6 py-3">Code</th>
