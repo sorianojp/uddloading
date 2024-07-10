@@ -18,6 +18,13 @@ return new class extends Migration
             $table->foreignId('room_id')->constrained()->onDelete('cascade');
             $table->time('time_start');
             $table->time('time_end');
+            $table->boolean('monday')->default(0);
+            $table->boolean('tuesday')->default(0);
+            $table->boolean('wednesday')->default(0);
+            $table->boolean('thursday')->default(0);
+            $table->boolean('friday')->default(0);
+            $table->boolean('saturday')->default(0);
+            $table->boolean('sunday')->default(0);
             $table->timestamps();
         });
     }

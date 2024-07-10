@@ -13,7 +13,14 @@ class Schedule extends Model
         'subject_id',
         'room_id',
         'time_start',
-        'time_end'
+        'time_end',
+        'monday',
+        'tuesday',
+        'wednesday',
+        'thursday',
+        'friday',
+        'saturday',
+        'sunday'
     ];
 
     public function section()

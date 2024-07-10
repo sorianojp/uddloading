@@ -6,7 +6,7 @@
         <div class="grid grid-cols-3 gap-2">
             <x-card>
                 <h1>Add Schedule</h1>
-                <form method="POST" action="{{ route('addSchedule', $section) }}">
+                <form method="POST" action="{{ route('addSchedule', $section) }}" class="space-y-2">
                     @csrf
                     <!-- Subject -->
                     <div>
@@ -41,6 +41,20 @@
                             <x-input-error :messages="$errors->get('time_end')" />
                         </div>
                     </div>
+                    @foreach (['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as $day)
+                        <div>
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="{{ $day }}" id="{{ $day }}"
+                                    value="1" class="sr-only peer"
+                                    @if (old($day, $schedule->$day ?? 0)) checked @endif>
+                                <div
+                                    class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
+                                </div>
+                                <span
+                                    class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300 uppercase">{{ $day }}</span>
+                            </label>
+                        </div>
+                    @endforeach
                     <div class="flex items-center justify-end mt-2 gap-2">
                         @if (session('status') === 'schedule-stored')
                             <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)">
@@ -62,8 +76,9 @@
                                 <th scope="col" class="px-6 py-3">LEC/LAB</th>
                                 <th scope="col" class="px-6 py-3">Section</th>
                                 <th scope="col" class="px-6 py-3">
-                                    schedule
+                                    Day
                                 </th>
+                                <th scope="col" class="px-6 py-3">Time</th>
                                 <th scope="col" class="px-6 py-3">Room</th>
                             </tr>
                         </thead>
@@ -77,10 +92,13 @@
                                     </td>
                                     <td class="px-6 py-4">{{ $section->section_name }}</td>
                                     <td class="px-6 py-4">
-                                        {{ implode(' ', explode(',', $schedule->days)) }}
-                                        {{ \Carbon\Carbon::createFromFormat('H:i:s', $schedule->time_start)->format('g:iA') }}-
-                                        {{ \Carbon\Carbon::createFromFormat('H:i:s', $schedule->time_end)->format('g:iA') }}
+                                        @foreach (['monday' => 'Mon', 'tuesday' => 'Tue', 'wednesday' => 'Wed', 'thursday' => 'Thu', 'friday' => 'Fri', 'saturday' => 'Sat', 'sunday' => 'Sun'] as $day => $label)
+                                            @if ($schedule->$day)
+                                                {{ $label }}
+                                            @endif
+                                        @endforeach
                                     </td>
+                                    <td class="px-6 py-4">{{ $schedule->time_start }} - {{ $schedule->time_end }}</td>
                                     <td class="px-6 py-4">{{ $schedule->room->room_name }}</td>
                                 </tr>
                             @empty

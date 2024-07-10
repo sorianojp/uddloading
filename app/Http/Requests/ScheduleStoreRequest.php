@@ -26,6 +26,13 @@ class ScheduleStoreRequest extends FormRequest
             'room_id' => ['required'],
             'time_start' => ['required', 'date_format:H:i'],
             'time_end' => ['required', 'date_format:H:i'],
+            'monday' => ['sometimes', 'boolean'],
+            'tuesday' => ['sometimes', 'boolean'],
+            'wednesday' => ['sometimes', 'boolean'],
+            'thursday' => ['sometimes', 'boolean'],
+            'friday' => ['sometimes', 'boolean'],
+            'saturday' => ['sometimes', 'boolean'],
+            'sunday' => ['sometimes', 'boolean'],
         ];
     }
 }
