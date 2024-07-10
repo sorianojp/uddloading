@@ -24,7 +24,6 @@ class ScheduleStoreRequest extends FormRequest
         return [
             'subject_id' => ['required'],
             'room_id' => ['required'],
-            'days' => ['required', 'array'],
             'time_start' => ['required', 'date_format:H:i'],
             'time_end' => ['required', 'date_format:H:i'],
         ];

@@ -18,8 +18,7 @@ class SubjectController extends Controller
     }
     public function addSubject(SubjectStoreRequest $request, Course $course): RedirectResponse
     {
-        $subject = new Subject($request->validated());
-        $course->subjects()->save($subject);
+        $course->subjects()->create($request->validated());
         return redirect()->route('subjects', $course)
                          ->with('status', 'subject-stored');
     }

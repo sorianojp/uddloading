@@ -18,7 +18,6 @@ return new class extends Migration
             $table->foreignId('room_id')->constrained()->onDelete('cascade');
             $table->time('time_start');
             $table->time('time_end');
-            $table->string('days');
             $table->timestamps();
         });
     }

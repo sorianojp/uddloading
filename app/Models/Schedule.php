@@ -12,7 +12,6 @@ class Schedule extends Model
         'section_id',
         'subject_id',
         'room_id',
-        'days',
         'time_start',
         'time_end'
     ];

@@ -18,8 +18,7 @@ class SectionController extends Controller
     }
     public function addSection(SectionStoreRequest $request, Course $course): RedirectResponse
     {
-        $section = new Section($request->validated());
-        $course->sections()->save($section);
+        $course->sections()->create($request->validated());
         return redirect()->route('sections', $course)
                          ->with('status', 'section-stored');
     }

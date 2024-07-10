@@ -24,12 +24,7 @@ class ScheduleController extends Controller
     }
     public function addSchedule(ScheduleStoreRequest $request, Section $section): RedirectResponse
     {
-        $validated = $request->validated();
-        $validated['days'] = implode(',', $validated['days']); // Convert array to comma-separated string
-
-        $schedule = new Schedule($validated);
-        $section->schedules()->save($schedule);
-
+        $section->schedules()->create($request->validated());
         return redirect()->route('schedules', $section)
                          ->with('status', 'schedule-stored');
     }
