@@ -71,42 +71,78 @@
                     <table class="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
-                                <th scope="col" class="px-6 py-3">Code</th>
-                                <th scope="col" class="px-6 py-3">Subject Name</th>
-                                <th scope="col" class="px-6 py-3">LEC/LAB</th>
-                                <th scope="col" class="px-6 py-3">Section</th>
-                                <th scope="col" class="px-6 py-3">
-                                    Day
-                                </th>
-                                <th scope="col" class="px-6 py-3">Time</th>
-                                <th scope="col" class="px-6 py-3">Room</th>
+                                <th scope="col" class="p-2">TIME</th>
+                                <th scope="col" class="p-2">MONDAY</th>
+                                <th scope="col" class="p-2">TUESDAY</th>
+                                <th scope="col" class="p-2">WEDNESDAY</th>
+                                <th scope="col" class="p-2">THURSDAY</th>
+                                <th scope="col" class="p-2">FRIDAY</th>
+                                <th scope="col" class="p-2">SATURDAY</th>
+                                <th scope="col" class="p-2">SUNDAY</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($section->schedules as $schedule)
-                                <tr
-                                    class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                                    <td class="px-6 py-4">{{ $schedule->subject->subject_code }}</td>
-                                    <td class="px-6 py-4">{{ $schedule->subject->subject_name }}</td>
-                                    <td class="px-6 py-4">{{ $schedule->subject->lec }}/{{ $schedule->subject->lab }}
-                                    </td>
-                                    <td class="px-6 py-4">{{ $section->section_name }}</td>
-                                    <td class="px-6 py-4">
-                                        @foreach (['monday' => 'Mon', 'tuesday' => 'Tue', 'wednesday' => 'Wed', 'thursday' => 'Thu', 'friday' => 'Fri', 'saturday' => 'Sat', 'sunday' => 'Sun'] as $day => $label)
-                                            @if ($schedule->$day)
-                                                {{ $label }}
-                                            @endif
-                                        @endforeach
-                                    </td>
-                                    <td class="px-6 py-4">{{ $schedule->time_start }} - {{ $schedule->time_end }}</td>
-                                    <td class="px-6 py-4">{{ $schedule->room->room_name }}</td>
+                            @php
+                                $startTime = strtotime('07:00:00');
+                                $endTime = strtotime('19:30:00');
+                                $interval = 30 * 60; // 30 minutes
+
+                                $scheduleData = [];
+                                foreach ($section->schedules as $schedule) {
+                                    foreach (
+                                        ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+                                        as $day
+                                    ) {
+                                        if ($schedule->$day) {
+                                            $time_start = strtotime($schedule->time_start);
+                                            $time_end = strtotime($schedule->time_end);
+                                            for ($time = $time_start; $time < $time_end; $time += $interval) {
+                                                $scheduleData[$time][$day] = [
+                                                    'subject_name' => $schedule->subject->subject_name,
+                                                    'room_name' => $schedule->room->room_name,
+                                                    'time_start' => $schedule->time_start,
+                                                    'time_end' => $schedule->time_end,
+                                                ];
+                                            }
+                                        }
+                                    }
+                                }
+                            @endphp
+                            @for ($time = $startTime; $time <= $endTime; $time += $interval)
+                                <tr class="border-b dark:border-gray-700">
+                                    <th class="p-2 whitespace-nowrap">{{ date('h:i A', $time) }}</th>
+                                    @foreach (['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as $day)
+                                        @php
+                                            $schedule = $scheduleData[$time][$day] ?? null;
+                                            $isMergedCell =
+                                                isset($schedule) &&
+                                                (!isset($scheduleData[$time - $interval][$day]) ||
+                                                    $scheduleData[$time - $interval][$day] !== $schedule);
+                                            $rowspan = 0;
+                                            if ($isMergedCell) {
+                                                $rowStart = $time;
+                                                while (
+                                                    isset($scheduleData[$rowStart][$day]) &&
+                                                    $scheduleData[$rowStart][$day] === $schedule
+                                                ) {
+                                                    $rowspan++;
+                                                    $rowStart += $interval;
+                                                }
+                                            }
+                                        @endphp
+                                        @if ($isMergedCell)
+                                            <td class="p-2 bg-blue-800 text-white" rowspan="{{ $rowspan }}">
+                                                {{ $schedule['subject_name'] }}<br>
+                                                {{ $schedule['room_name'] }}<br>
+                                                {{ date('h:i A', strtotime($schedule['time_start'])) }} -
+                                                {{ date('h:i A', strtotime($schedule['time_end'])) }}
+                                            </td>
+                                        @elseif (!isset($scheduleData[$time - $interval][$day]))
+                                            <td class="p-2"></td>
+                                        @endif
+                                    @endforeach
                                 </tr>
-                            @empty
-                                <tr
-                                    class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                                    <td class="px-6 py-4" colspan="4">There are no data.</td>
-                                </tr>
-                            @endforelse
+                            @endfor
                         </tbody>
                     </table>
                 </div>
