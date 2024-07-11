@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('section_id')->constrained()->onDelete('cascade');
             $table->foreignId('subject_id')->constrained()->onDelete('cascade');
             $table->foreignId('room_id')->constrained()->onDelete('cascade');
+            $table->foreignId('faculty_id')->nullable()->constrained()->onDelete('cascade');
             $table->time('time_start');
             $table->time('time_end');
             $table->boolean('monday')->default(0);

@@ -27,6 +27,15 @@
                         </x-select-input>
                         <x-input-error :messages="$errors->get('room_id')" />
                     </div>
+                    <div>
+                        <x-input-label for="faculty_id" :value="__('Faculty')" />
+                        <x-select-input name="faculty_id" id="faculty_id">
+                            @foreach ($faculties as $faculty)
+                                <option value="{{ $faculty->id }}">{{ $faculty->full_name }}</option>
+                            @endforeach
+                        </x-select-input>
+                        <x-input-error :messages="$errors->get('faculty_id')" />
+                    </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <x-input-label for="time_start" :value="__('Start Time')" />
@@ -100,6 +109,7 @@
                                                 $scheduleData[$time][$day] = [
                                                     'subject_name' => $schedule->subject->subject_name,
                                                     'room_name' => $schedule->room->room_name,
+                                                    'faculty_full_name' => $schedule->faculty->full_name,
                                                     'time_start' => $schedule->time_start,
                                                     'time_end' => $schedule->time_end,
                                                 ];
@@ -132,10 +142,12 @@
                                         @endphp
                                         @if ($isMergedCell)
                                             <td class="p-2 bg-blue-800 text-white" rowspan="{{ $rowspan }}">
-                                                <span class="font-bold">{{ $schedule['subject_name'] }}</span>
-                                                {{ date('h:i A', strtotime($schedule['time_start'])) }} -
-                                                {{ date('h:i A', strtotime($schedule['time_end'])) }}
-                                                {{ $schedule['room_name'] }}
+                                                <div><span class="font-bold">{{ $schedule['subject_name'] }}</span>
+                                                </div>
+                                                <div> {{ date('h:i A', strtotime($schedule['time_start'])) }} -
+                                                    {{ date('h:i A', strtotime($schedule['time_end'])) }}</div>
+                                                <div>{{ $schedule['room_name'] }}</div>
+                                                <div> {{ $schedule['faculty_full_name'] }}</div>
                                             </td>
                                         @elseif (!isset($scheduleData[$time - $interval][$day]))
                                             <td class="p-2"></td>

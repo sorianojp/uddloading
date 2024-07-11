@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Section;
 use App\Models\Schedule;
 use App\Models\Room;
+use App\Models\Faculty;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,7 +21,8 @@ class ScheduleController extends Controller
     public function schedules(Section $section): View
     {
         $rooms = Room::all();
-        return view('schedules.index',compact('section', 'rooms'));
+        $faculties = Faculty::all();
+        return view('schedules.index',compact('section', 'rooms', 'faculties'));
     }
     public function addSchedule(ScheduleStoreRequest $request, Section $section): RedirectResponse
     {

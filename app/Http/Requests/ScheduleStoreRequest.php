@@ -24,6 +24,7 @@ class ScheduleStoreRequest extends FormRequest
         return [
             'subject_id' => ['required'],
             'room_id' => ['required'],
+            'faculty_id' => ['required'],
             'time_start' => ['required', 'date_format:H:i'],
             'time_end' => ['required', 'date_format:H:i'],
             'monday' => ['sometimes', 'boolean'],

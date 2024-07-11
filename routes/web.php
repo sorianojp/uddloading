@@ -7,6 +7,7 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\FacultyController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -26,6 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::resources([
         'courses' => CourseController::class,
         'rooms' => RoomController::class,
+        'faculties' => FacultyController::class,
         'schedules' => ScheduleController::class,
     ]);
     Route::get('courses/{course}/subjects', [SubjectController::class, 'subjects'])->name('subjects');
