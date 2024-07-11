@@ -3,8 +3,8 @@
         {{ $section->section_name }}
     </x-slot>
     <div class="max-w-full mx-auto space-y-2">
-        <div class="grid grid-cols-3 gap-2">
-            <x-card>
+        <div class="grid grid-cols-7 gap-2">
+            <x-card class="col-span-2">
                 <h1>Add Schedule</h1>
                 <form method="POST" action="{{ route('addSchedule', $section) }}" class="space-y-2">
                     @csrf
@@ -65,20 +65,20 @@
                     </div>
                 </form>
             </x-card>
-            <x-card class="col-span-2">
+            <x-card class="col-span-5">
                 <h1>Schedules</h1>
                 <div class="relative overflow-x-auto sm:rounded-lg">
-                    <table class="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <table class="w-full table-fixed text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
-                                <th scope="col" class="p-2">TIME</th>
-                                <th scope="col" class="p-2">MONDAY</th>
-                                <th scope="col" class="p-2">TUESDAY</th>
-                                <th scope="col" class="p-2">WEDNESDAY</th>
-                                <th scope="col" class="p-2">THURSDAY</th>
-                                <th scope="col" class="p-2">FRIDAY</th>
-                                <th scope="col" class="p-2">SATURDAY</th>
-                                <th scope="col" class="p-2">SUNDAY</th>
+                                <th scope="col" class="p-2 w-1/8">TIME</th>
+                                <th scope="col" class="p-2 w-1/8">MONDAY</th>
+                                <th scope="col" class="p-2 w-1/8">TUESDAY</th>
+                                <th scope="col" class="p-2 w-1/8">WEDNESDAY</th>
+                                <th scope="col" class="p-2 w-1/8">THURSDAY</th>
+                                <th scope="col" class="p-2 w-1/8">FRIDAY</th>
+                                <th scope="col" class="p-2 w-1/8">SATURDAY</th>
+                                <th scope="col" class="p-2 w-1/8">SUNDAY</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -132,10 +132,10 @@
                                         @endphp
                                         @if ($isMergedCell)
                                             <td class="p-2 bg-blue-800 text-white" rowspan="{{ $rowspan }}">
-                                                {{ $schedule['subject_name'] }}<br>
-                                                {{ $schedule['room_name'] }}<br>
+                                                <span class="font-bold">{{ $schedule['subject_name'] }}</span>
                                                 {{ date('h:i A', strtotime($schedule['time_start'])) }} -
                                                 {{ date('h:i A', strtotime($schedule['time_end'])) }}
+                                                {{ $schedule['room_name'] }}
                                             </td>
                                         @elseif (!isset($scheduleData[$time - $interval][$day]))
                                             <td class="p-2"></td>
