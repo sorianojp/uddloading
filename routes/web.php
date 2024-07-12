@@ -34,9 +34,14 @@ Route::middleware('auth')->group(function () {
     Route::post('courses/{course}/addSubject', [SubjectController::class, 'addSubject'])->name('addSubject');
     Route::get('courses/{course}/sections', [SectionController::class, 'sections'])->name('sections');
     Route::post('courses/{course}/addSection', [SectionController::class, 'addSection'])->name('addSection');
-    Route::get('sections/{section}/schedules', [ScheduleController::class, 'schedules'])->name('schedules');
-    Route::post('sections/{section}/addSchedule', [ScheduleController::class, 'addSchedule'])->name('addSchedule');
 
+
+    Route::get('sections/{section}/schedules', [ScheduleController::class, 'sectionSchedules'])->name('sectionSchedules');
+    Route::get('faculties/{faculty}/schedules', [ScheduleController::class, 'facultySchedules'])->name('facultySchedules');
+
+
+    Route::post('sections/{section}/addSectionSchedule', [ScheduleController::class, 'addSectionSchedule'])->name('addSectionSchedule');
+    Route::post('faculties/{faculty}/addFacultySchedule', [ScheduleController::class, 'addFacultySchedule'])->name('addFacultySchedule');
 
 });
 

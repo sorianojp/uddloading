@@ -6,13 +6,13 @@
         <div class="grid grid-cols-7 gap-2">
             <x-card class="col-span-2">
                 <h1>Add Schedule</h1>
-                <form method="POST" action="{{ route('addSchedule', $section) }}" class="space-y-2">
+                <form method="POST" action="{{ route('addSectionSchedule', $section) }}" class="space-y-2">
                     @csrf
                     <!-- Subject -->
                     <div>
                         <x-input-label for="subject_id" :value="__('Subject')" />
                         <x-select-input name="subject_id" id="subject_id">
-                            @foreach ($section->course->subjects as $subject)
+                            @foreach ($subjects as $subject)
                                 <option value="{{ $subject->id }}">{{ $subject->subject_name }}</option>
                             @endforeach
                         </x-select-input>
@@ -96,60 +96,72 @@
                                 $endTime = strtotime('19:30:00');
                                 $interval = 30 * 60; // 30 minutes
 
-                                $scheduleData = [];
-                                foreach ($section->schedules as $schedule) {
-                                    foreach (
-                                        ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
-                                        as $day
-                                    ) {
-                                        if ($schedule->$day) {
-                                            $time_start = strtotime($schedule->time_start);
-                                            $time_end = strtotime($schedule->time_end);
-                                            for ($time = $time_start; $time < $time_end; $time += $interval) {
-                                                $scheduleData[$time][$day] = [
-                                                    'subject_name' => $schedule->subject->subject_name,
-                                                    'room_name' => $schedule->room->room_name,
-                                                    'faculty_full_name' => $schedule->faculty->full_name,
-                                                    'time_start' => $schedule->time_start,
-                                                    'time_end' => $schedule->time_end,
-                                                ];
-                                            }
-                                        }
-                                    }
+                                // Function to generate a unique color for each subject
+                                function getColorForSubject($subjectId)
+                                {
+                                    $colors = [
+                                        '#537188',
+                                        '#8294C4',
+                                        '#BFCCB5',
+                                        '#A87676',
+                                        '#F6995C',
+                                        '#B4B4B8',
+                                        '#FFF7D4',
+                                        '#BEADFA',
+                                        '#7C9D96',
+                                        '#116A7B',
+                                        '#FFD966',
+                                        '#BDCDD6',
+                                    ];
+                                    return $colors[$subjectId % count($colors)];
+                                }
+
+                                // Mapping subjects to colors
+                                $subjectColors = [];
+                                foreach ($section->course->subjects as $subject) {
+                                    $subjectColors[$subject->id] = getColorForSubject($subject->id);
                                 }
                             @endphp
                             @for ($time = $startTime; $time <= $endTime; $time += $interval)
                                 <tr class="border-b dark:border-gray-700">
-                                    <th class="p-2 whitespace-nowrap">{{ date('h:i A', $time) }}</th>
+                                    <td class="p-2">{{ date('h:i:s A', $time) }}</td>
                                     @foreach (['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as $day)
                                         @php
-                                            $schedule = $scheduleData[$time][$day] ?? null;
-                                            $isMergedCell =
-                                                isset($schedule) &&
-                                                (!isset($scheduleData[$time - $interval][$day]) ||
-                                                    $scheduleData[$time - $interval][$day] !== $schedule);
-                                            $rowspan = 0;
-                                            if ($isMergedCell) {
-                                                $rowStart = $time;
-                                                while (
-                                                    isset($scheduleData[$rowStart][$day]) &&
-                                                    $scheduleData[$rowStart][$day] === $schedule
-                                                ) {
-                                                    $rowspan++;
-                                                    $rowStart += $interval;
-                                                }
-                                            }
+                                            $schedulesForSlot = [];
                                         @endphp
-                                        @if ($isMergedCell)
-                                            <td class="p-2 bg-blue-800 text-white" rowspan="{{ $rowspan }}">
-                                                <div><span class="font-bold">{{ $schedule['subject_name'] }}</span>
-                                                </div>
-                                                <div> {{ date('h:i A', strtotime($schedule['time_start'])) }} -
-                                                    {{ date('h:i A', strtotime($schedule['time_end'])) }}</div>
-                                                <div>{{ $schedule['room_name'] }}</div>
-                                                <div> {{ $schedule['faculty_full_name'] }}</div>
+                                        @foreach ($section->schedules as $schedule)
+                                            @if ($schedule->$day && strtotime($schedule->time_start) <= $time && strtotime($schedule->time_end) > $time)
+                                                @php
+                                                    $schedulesForSlot[] = [
+                                                        'info' =>
+                                                            $schedule->subject->subject_name .
+                                                            ' (' .
+                                                            $schedule->room->room_name .
+                                                            ') ' .
+                                                            date('h:i A', strtotime($schedule->time_start)) .
+                                                            ' - ' .
+                                                            date('h:i A', strtotime($schedule->time_end)),
+                                                        'color' => $subjectColors[$schedule->subject->id],
+                                                    ];
+                                                @endphp
+                                            @endif
+                                        @endforeach
+                                        @if (count($schedulesForSlot) > 1)
+                                            <td class="p-1 text-white bg-red-600">
+                                                <span class="font-bold">Conflict</span>
+                                                @foreach ($schedulesForSlot as $scheduleSlot)
+                                                    <div class="p-1"
+                                                        style="background-color: {{ $scheduleSlot['color'] }};">
+                                                        {!! $scheduleSlot['info'] !!}
+                                                    </div>
+                                                @endforeach
                                             </td>
-                                        @elseif (!isset($scheduleData[$time - $interval][$day]))
+                                        @elseif (count($schedulesForSlot) === 1)
+                                            <td class="p-2 text-white font-bold"
+                                                style="background-color: {{ $schedulesForSlot[0]['color'] }};">
+                                                {{ $schedulesForSlot[0]['info'] }}
+                                            </td>
+                                        @else
                                             <td class="p-2"></td>
                                         @endif
                                     @endforeach
