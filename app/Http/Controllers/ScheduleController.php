@@ -34,16 +34,52 @@ class ScheduleController extends Controller
         $sections = Section::all();
         return view('schedules.faculty',compact('faculty', 'subjects', 'rooms', 'sections'));
     }
+    private function hasConflict($request)
+    {
+        $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+        $query = Schedule::where('room_id', $request->room_id)
+                         ->where(function($query) use ($request) {
+                             $query->whereBetween('time_start', [$request->time_start, $request->time_end])
+                                   ->orWhereBetween('time_end', [$request->time_start, $request->time_end])
+                                   ->orWhere(function($query) use ($request) {
+                                       $query->where('time_start', '<', $request->time_start)
+                                             ->where('time_end', '>', $request->time_end);
+                                   });
+                         });
+
+        $query->where(function ($q) use ($request, $days) {
+            foreach ($days as $day) {
+                if ($request->$day) {
+                    $q->orWhere($day, true);
+                }
+            }
+        });
+
+        return $query->with(['subject', 'room', 'faculty', 'section'])->get();
+    }
+
     public function addSectionSchedule(SectionScheduleStoreRequest $request, Section $section): RedirectResponse
     {
+        $conflicts = $this->hasConflict($request);
+        if ($conflicts->isNotEmpty()) {
+            return redirect()->back()->withErrors(['conflict' => 'Schedule conflict detected.', 'conflict_details' => json_encode($conflicts)]);
+        }
+
         $section->schedules()->create($request->validated());
-        return redirect()->route('sectionSchedules', $section)
-                         ->with('status', 'schedule-stored');
+        return redirect()->route('sectionSchedules', $section)->with('status', 'schedule-stored');
     }
+
     public function addFacultySchedule(FacultyScheduleStoreRequest $request, Faculty $faculty): RedirectResponse
     {
+        $conflicts = $this->hasConflict($request);
+        if ($conflicts->isNotEmpty()) {
+            return redirect()->back()->withErrors(['conflict' => 'Schedule conflict detected.', 'conflict_details' => json_encode($conflicts)]);
+        }
+
         $faculty->schedules()->create($request->validated());
-        return redirect()->route('facultySchedules', $faculty)
-                         ->with('status', 'schedule-stored');
+        return redirect()->route('facultySchedules', $faculty)->with('status', 'schedule-stored');
     }
+
+
 }

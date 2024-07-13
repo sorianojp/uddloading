@@ -3,6 +3,31 @@
         {{ $section->section_name }}
     </x-slot>
     <div class="max-w-full mx-auto space-y-2">
+        @if ($errors->has('conflict'))
+            <div class="alert alert-danger">
+                {{ $errors->first('conflict') }}
+                @php
+                    $conflictDetails = json_decode($errors->first('conflict_details'), true);
+                @endphp
+                <ul>
+                    @foreach ($conflictDetails as $conflict)
+                        <li>
+                            Conflict with:
+                            Subject: {{ $conflict['subject']['subject_name'] }},
+                            Room: {{ $conflict['room']['room_name'] }},
+                            Time: {{ $conflict['time_start'] }} to {{ $conflict['time_end'] }},
+                            Days:
+                            @foreach (['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as $day)
+                                @if ($conflict[$day])
+                                    {{ ucfirst($day) }}
+                                @endif
+                            @endforeach
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <div class="grid grid-cols-7 gap-2">
             <x-card class="col-span-2">
                 <h1>Add Schedule</h1>
