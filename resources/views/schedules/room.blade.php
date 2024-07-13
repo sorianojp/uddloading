@@ -1,6 +1,8 @@
+<!-- resources/views/schedules/faculty.blade.php -->
+
 <x-app-layout>
     <x-slot name="header">
-        {{ $section->section_name }}
+        {{ $room->room_name }}
     </x-slot>
     <div class="max-w-full mx-auto space-y-2">
         @if ($errors->has('conflict'))
@@ -27,11 +29,10 @@
                 </ul>
             </div>
         @endif
-
         <div class="grid grid-cols-7 gap-2">
             <x-card class="col-span-2">
                 <h1>Add Schedule</h1>
-                <form method="POST" action="{{ route('addSectionSchedule', $section) }}" class="space-y-2">
+                <form method="POST" action="{{ route('addRoomSchedule', $room) }}" class="space-y-2">
                     @csrf
                     <!-- Subject -->
                     <div>
@@ -44,15 +45,6 @@
                         <x-input-error :messages="$errors->get('subject_id')" />
                     </div>
                     <div>
-                        <x-input-label for="room_id" :value="__('Room')" />
-                        <x-select-input name="room_id" id="room_id">
-                            @foreach ($rooms as $room)
-                                <option value="{{ $room->id }}">{{ $room->room_name }}</option>
-                            @endforeach
-                        </x-select-input>
-                        <x-input-error :messages="$errors->get('room_id')" />
-                    </div>
-                    <div>
                         <x-input-label for="faculty_id" :value="__('Faculty')" />
                         <x-select-input name="faculty_id" id="faculty_id">
                             @foreach ($faculties as $faculty)
@@ -60,6 +52,15 @@
                             @endforeach
                         </x-select-input>
                         <x-input-error :messages="$errors->get('faculty_id')" />
+                    </div>
+                    <div>
+                        <x-input-label for="section_id" :value="__('Section')" />
+                        <x-select-input name="section_id" id="section_id">
+                            @foreach ($sections as $section)
+                                <option value="{{ $section->id }}">{{ $section->section_name }}</option>
+                            @endforeach
+                        </x-select-input>
+                        <x-input-error :messages="$errors->get('section_id')" />
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
@@ -100,7 +101,7 @@
                 </form>
             </x-card>
             <x-card class="col-span-5">
-                <h1>Schedules</h1>
+                <h1>{{ $room->room_name }}'s Schedule</h1>
                 <div class="relative overflow-x-auto sm:rounded-lg">
                     <table class="w-full table-fixed text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -154,7 +155,7 @@
                                         @php
                                             $schedulesForSlot = [];
                                         @endphp
-                                        @foreach ($section->schedules as $schedule)
+                                        @foreach ($room->schedules as $schedule)
                                             @if ($schedule->$day && strtotime($schedule->time_start) <= $time && strtotime($schedule->time_end) > $time)
                                                 @php
                                                     $schedulesForSlot[] = [
@@ -179,6 +180,7 @@
                                                     <div class="p-1"
                                                         style="background-color: {{ $scheduleSlot['color'] }};">
                                                         {!! $scheduleSlot['info'] !!}
+
                                                     </div>
                                                 @endforeach
                                             </td>

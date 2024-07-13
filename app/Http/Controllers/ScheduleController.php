@@ -11,13 +11,15 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\SectionScheduleStoreRequest;
 use App\Http\Requests\FacultyScheduleStoreRequest;
+use App\Http\Requests\RoomScheduleStoreRequest;
 class ScheduleController extends Controller
 {
     public function index(): View
     {
         $sections = Section::latest()->paginate(5);
         $faculties = Faculty::latest()->paginate(5);
-        return view('schedules.schedule', compact('sections', 'faculties'))
+        $rooms = Room::latest()->paginate(5);
+        return view('schedules.schedule', compact('sections', 'faculties', 'rooms'))
                     ->with('i', (request()->input('page', 1) - 1) * 5);
     }
     public function sectionSchedules(Section $section): View
@@ -33,6 +35,13 @@ class ScheduleController extends Controller
         $rooms = Room::all();
         $sections = Section::all();
         return view('schedules.faculty',compact('faculty', 'subjects', 'rooms', 'sections'));
+    }
+    public function roomSchedules(Room $room): View
+    {
+        $subjects = Subject::all();
+        $faculties = Faculty::all();
+        $sections = Section::all();
+        return view('schedules.room',compact('faculties', 'subjects', 'room', 'sections'));
     }
     private function hasConflict($request)
     {
@@ -80,6 +89,18 @@ class ScheduleController extends Controller
         $faculty->schedules()->create($request->validated());
         return redirect()->route('facultySchedules', $faculty)->with('status', 'schedule-stored');
     }
+
+    public function addRoomSchedule(RoomScheduleStoreRequest $request, Room $room): RedirectResponse
+    {
+        $conflicts = $this->hasConflict($request);
+        if ($conflicts->isNotEmpty()) {
+            return redirect()->back()->withErrors(['conflict' => 'Schedule conflict detected.', 'conflict_details' => json_encode($conflicts)]);
+        }
+
+        $room->schedules()->create($request->validated());
+        return redirect()->route('roomSchedules', $room)->with('status', 'schedule-stored');
+    }
+
 
 
 }

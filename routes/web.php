@@ -38,10 +38,11 @@ Route::middleware('auth')->group(function () {
 
     Route::get('sections/{section}/schedules', [ScheduleController::class, 'sectionSchedules'])->name('sectionSchedules');
     Route::get('faculties/{faculty}/schedules', [ScheduleController::class, 'facultySchedules'])->name('facultySchedules');
-
+    Route::get('rooms/{room}/schedules', [ScheduleController::class, 'roomSchedules'])->name('roomSchedules');
 
     Route::post('sections/{section}/addSectionSchedule', [ScheduleController::class, 'addSectionSchedule'])->name('addSectionSchedule');
     Route::post('faculties/{faculty}/addFacultySchedule', [ScheduleController::class, 'addFacultySchedule'])->name('addFacultySchedule');
+    Route::post('rooms/{room}/addRoomSchedule', [ScheduleController::class, 'addRoomSchedule'])->name('addRoomSchedule');
 
 });
 
