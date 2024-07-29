@@ -34,6 +34,7 @@ class SectionScheduleStoreRequest extends FormRequest
             'friday' => ['sometimes', 'boolean'],
             'saturday' => ['sometimes', 'boolean'],
             'sunday' => ['sometimes', 'boolean'],
+            'override' => ['sometimes', 'boolean'],
         ];
     }
 }

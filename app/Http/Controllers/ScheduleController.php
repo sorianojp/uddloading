@@ -43,64 +43,89 @@ class ScheduleController extends Controller
         $sections = Section::all();
         return view('schedules.room',compact('faculties', 'subjects', 'room', 'sections'));
     }
-    private function hasConflict($request)
-    {
-        $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-
-        $query = Schedule::where('room_id', $request->room_id)
-                         ->where(function($query) use ($request) {
-                             $query->whereBetween('time_start', [$request->time_start, $request->time_end])
-                                   ->orWhereBetween('time_end', [$request->time_start, $request->time_end])
-                                   ->orWhere(function($query) use ($request) {
-                                       $query->where('time_start', '<', $request->time_start)
-                                             ->where('time_end', '>', $request->time_end);
-                                   });
-                         });
-
-        $query->where(function ($q) use ($request, $days) {
-            foreach ($days as $day) {
-                if ($request->$day) {
-                    $q->orWhere($day, true);
-                }
-            }
-        });
-
-        return $query->with(['subject', 'room', 'faculty', 'section'])->get();
-    }
-
     public function addSectionSchedule(SectionScheduleStoreRequest $request, Section $section): RedirectResponse
     {
-        $conflicts = $this->hasConflict($request);
+        $conflicts = $this->getConflicts($request);
+
         if ($conflicts->isNotEmpty()) {
-            return redirect()->back()->withErrors(['conflict' => 'Schedule conflict detected.', 'conflict_details' => json_encode($conflicts)]);
+            return redirect()->back()->withErrors(['conflicts' => $this->formatConflicts($conflicts)]);
         }
 
         $section->schedules()->create($request->validated());
-        return redirect()->route('sectionSchedules', $section)->with('status', 'schedule-stored');
+        return redirect()->route('sectionSchedules', $section)
+                         ->with('status', 'schedule-stored');
     }
 
     public function addFacultySchedule(FacultyScheduleStoreRequest $request, Faculty $faculty): RedirectResponse
     {
-        $conflicts = $this->hasConflict($request);
+        $conflicts = $this->getConflicts($request);
+
         if ($conflicts->isNotEmpty()) {
-            return redirect()->back()->withErrors(['conflict' => 'Schedule conflict detected.', 'conflict_details' => json_encode($conflicts)]);
+            return redirect()->back()->withErrors(['conflicts' => $this->formatConflicts($conflicts)]);
         }
 
         $faculty->schedules()->create($request->validated());
-        return redirect()->route('facultySchedules', $faculty)->with('status', 'schedule-stored');
+        return redirect()->route('facultySchedules', $faculty)
+                         ->with('status', 'schedule-stored');
     }
 
     public function addRoomSchedule(RoomScheduleStoreRequest $request, Room $room): RedirectResponse
     {
-        $conflicts = $this->hasConflict($request);
+        $conflicts = $this->getConflicts($request);
+
         if ($conflicts->isNotEmpty()) {
-            return redirect()->back()->withErrors(['conflict' => 'Schedule conflict detected.', 'conflict_details' => json_encode($conflicts)]);
+            return redirect()->back()->withErrors(['conflicts' => $this->formatConflicts($conflicts)]);
         }
 
         $room->schedules()->create($request->validated());
-        return redirect()->route('roomSchedules', $room)->with('status', 'schedule-stored');
+        return redirect()->route('roomSchedules', $room)
+                         ->with('status', 'schedule-stored');
     }
 
+    private function getConflicts($request)
+    {
+        $query = Schedule::query();
 
+        // Check each day
+        $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        foreach ($days as $day) {
+            if ($request->input($day)) {
+                $query->orWhere(function ($query) use ($request, $day) {
+                    $query->where($day, true)
+                        ->where(function ($query) use ($request) {
+                            $query->where('room_id', $request->room_id)
+                                ->orWhere('section_id', $request->section_id)
+                                ->orWhere('faculty_id', $request->faculty_id);
+                        })
+                        ->where(function ($query) use ($request) {
+                            $query->whereTime('time_start', '<', $request->time_end)
+                                ->whereTime('time_end', '>', $request->time_start);
+                        });
+                });
+            }
+        }
 
+        return $query->get();
+    }
+
+    private function formatConflicts($conflicts)
+    {
+        return $conflicts->map(function ($conflict) {
+            $days = [];
+
+            if ($conflict->monday) $days[] = 'Monday';
+            if ($conflict->tuesday) $days[] = 'Tuesday';
+            if ($conflict->wednesday) $days[] = 'Wednesday';
+            if ($conflict->thursday) $days[] = 'Thursday';
+            if ($conflict->friday) $days[] = 'Friday';
+            if ($conflict->saturday) $days[] = 'Saturday';
+            if ($conflict->sunday) $days[] = 'Sunday';
+
+            return 'Days: ' . implode(', ', $days) .
+                   ', Subject: ' . $conflict->subject->subject_name .
+                   ', Room: ' . $conflict->room->room_name .
+                   ', Faculty: ' . ($conflict->faculty ? $conflict->faculty->full_name : 'N/A') .
+                   ', Time: ' . $conflict->time_start . ' - ' . $conflict->time_end;
+        })->toArray();
+    }
 }

@@ -26,6 +26,7 @@ return new class extends Migration
             $table->boolean('friday')->default(0);
             $table->boolean('saturday')->default(0);
             $table->boolean('sunday')->default(0);
+            $table->boolean('override')->default(0);
             $table->timestamps();
         });
     }

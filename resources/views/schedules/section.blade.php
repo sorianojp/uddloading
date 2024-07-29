@@ -3,26 +3,14 @@
         {{ $section->section_name }}
     </x-slot>
     <div class="max-w-full mx-auto space-y-2">
-        @if ($errors->has('conflict'))
-            <div class="alert alert-danger">
-                {{ $errors->first('conflict') }}
-                @php
-                    $conflictDetails = json_decode($errors->first('conflict_details'), true);
-                @endphp
-                <ul>
-                    @foreach ($conflictDetails as $conflict)
-                        <li>
-                            Conflict with:
-                            Subject: {{ $conflict['subject']['subject_name'] }},
-                            Room: {{ $conflict['room']['room_name'] }},
-                            Time: {{ $conflict['time_start'] }} to {{ $conflict['time_end'] }},
-                            Days:
-                            @foreach (['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as $day)
-                                @if ($conflict[$day])
-                                    {{ ucfirst($day) }}
-                                @endif
-                            @endforeach
-                        </li>
+
+        @if ($errors->has('conflicts'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <strong class="font-bold">Schedule Conflict Detected!</strong>
+                <span class="block sm:inline">The following schedules conflict with your proposed schedule:</span>
+                <ul class="mt-2">
+                    @foreach ($errors->get('conflicts') as $conflict)
+                        <li>{{ $conflict }}</li>
                     @endforeach
                 </ul>
             </div>
